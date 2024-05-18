@@ -5,10 +5,19 @@ import java.nio.file.*;
 public class FinanceManager {
     private List<Transaction> transactions;
     private final String dataFile = "transactions.txt";
+    private double budgetLimit = 10000;
 
     public FinanceManager() {
         this.transactions = new ArrayList<>();
         loadTransactions();
+    }
+
+    public double getBudgetLimit() {
+        return budgetLimit;
+    }
+
+    public void setBudgetLimit(double newLimit) {
+        budgetLimit = newLimit;
     }
 
     private void loadTransactions() {
@@ -46,7 +55,7 @@ public class FinanceManager {
     }
 
     public void displaySummaryByCategory() {
-        Map<String, Double> summary = new HashMap<>();
+        Map<String, Double> summary = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         for (Transaction t : transactions) {
             summary.merge(t.getCategory(), t.getAmount(), Double::sum);
         }
@@ -54,7 +63,7 @@ public class FinanceManager {
     }
 
     public void checkOverspending() {
-        double budgetLimit = 1000; // example threshold
+
         double totalExpense = transactions.stream()
                 .filter(t -> t.getType().equalsIgnoreCase("Expense"))
                 .mapToDouble(Transaction::getAmount)
